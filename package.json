@@ -1,0 +1,29 @@
+{
+  "name": "nest-mysql",
+  "version": "1.0.0",
+  "description": "Nest TypeScript starter repository with mysql",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "prestart:prod": "tsc",
+    "start:prod": "node dist/server.js"
+  },
+  "dependencies": {
+    "@nestjs/common": "^3.0.0",
+    "@nestjs/core": "^3.0.1",
+    "@nestjs/microservices": "^3.0.1",
+    "@nestjs/testing": "^3.0.0",
+    "@nestjs/websockets": "^3.0.0",
+    "body-parser": "^1.17.2",
+    "cors": "^2.8.4",
+    "dotenv": "^4.0.0",
+    "mysql": "^2.14.1",
+    "reflect-metadata": "^0.1.10",
+    "rxjs": "^5.4.3"
+  },
+  "devDependencies": {
+    "ts-node": "^3.3.0",
+    "typescript": "^2.4.2",
+    "@types/node": "^8.0.20"
+  }
+}
