@@ -16,4 +16,16 @@ export class Box {
     	}
     	return boxs;
     }
+
+    public getPositionInitial(posEnd: string){
+        let postions = { white: [], black: [] };
+        let columns = parseInt(posEnd.substring(1, posEnd.length))
+        let letter = posEnd.substring(0, 1);
+        let letterEnd = this.letter[(this.letter.indexOf(letter) - 1)]
+        for (var i = 0; i < columns; ++i) {
+            postions.white.push('A' + (i + 1));
+            postions.black.push(letterEnd + (i + 1));
+        }
+        return postions;
+    }
 }

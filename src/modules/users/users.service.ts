@@ -16,4 +16,8 @@ export class UsersService {
     	return await (this.db.query(`UPDATE usuario SET movimiento='${movimiento}' where code=${code}`));
     }   
 
+    public async updateColor(userId: number, color: number){
+    	return await (this.db.query(`UPDATE usuario SET team='${color}' where id=${userId}`));
+    }
+
 }
