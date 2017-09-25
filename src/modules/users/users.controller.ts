@@ -17,7 +17,7 @@ export class UsersController {
     		const query = await this.users.updateMovement(body.code, body.movimiento);
 			res.status(HttpStatus.OK).json(query);	
     	}else{
-    		res.status(HttpStatus.BAD_REQUEST).json('Enserio se parece mas a Zanoni, no sea webon');
+    		res.status(HttpStatus.BAD_REQUEST).json({ state: 'ERROR', description: 'GG'});
     	}      
     }
 
@@ -27,7 +27,7 @@ export class UsersController {
     		const query = await this.users.getAll();
     		res.status(HttpStatus.OK).json(query);
     	}else{
-    		res.status(HttpStatus.UNAUTHORIZED).json("MK que inventa, ya parece Zanoni Alfredo Salas Tobon");
+    		res.status(HttpStatus.UNAUTHORIZED).json({ state: 'ERROR', description: 'GG'});
     	}
     	
     }

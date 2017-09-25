@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module} from '@nestjs/common';
 import { BoxsController } from './boxs.controller';
 
 import { BoxsService } from './boxs.service';
@@ -10,7 +10,7 @@ import { User } from '../../providers/user.provider';
 import { SharedModule } from './../shared/shared.module';
 
 @Module({
-    components: [BoxsService, Box, User, UsersService],
+    components: [BoxsService, Box, UsersService, User],
     controllers: [BoxsController],
     modules: [SharedModule]
 })
