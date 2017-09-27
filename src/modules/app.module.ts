@@ -4,6 +4,6 @@ import { UserModule } from './users/users.module';
 import { ScoreModule } from './score/score.module';
 
 @Module({
-    modules: [BoxsModule, UserModule],
+    modules: [BoxsModule, UserModule, ScoreModule],
 })
 export class ApplicationModule {}

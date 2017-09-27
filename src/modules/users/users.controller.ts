@@ -15,7 +15,7 @@ export class UsersController {
     			body.movimiento = 0;
     		}
     		const query = await this.users.updateMovement(body.code, body.movimiento);
-			res.status(HttpStatus.OK).json(query);	
+			res.status(HttpStatus.OK).json({ state: 'OK' });	
     	}else{
     		res.status(HttpStatus.BAD_REQUEST).json({ state: 'ERROR', description: 'GG'});
     	}      

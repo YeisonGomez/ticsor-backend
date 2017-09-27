@@ -1,4 +1,5 @@
 import { Component } from '@nestjs/common'
+import { ModuleRef } from '@nestjs/core'
 import { DatabaseService } from './../shared/db.service';
 
 import { UsersService } from '../users/users.service';
@@ -31,11 +32,18 @@ export class BoxsService {
     }
 
     public async getTablePublic(){
-        return await (this.db.query(`select nombre from casilla where id = (select max(id) from casilla)`))
+        return await (this.db.query(`
+            select c.nombre as casilla, c.fk_usuario as usuario, (CASE WHEN u.team = 0 THEN 'white' ELSE 'black' END) as color
+            from casilla c
+            right join usuario u on c.fk_usuario = u.id`))
     }    
 
     public async killUserTable(fk_user: number, box: string){
         return await (this.db.query(`UPDATE casilla SET fk_usuario=null where nombre='${box}'`));
+    }
+
+    public async newPosition(userId: number, box: string){
+        return await (this.db.query(`UPDATE casilla SET fk_usuario=${userId} where nombre='${box}'`));
     }
 
     public async getUserAndBox(){
@@ -74,6 +82,8 @@ export class BoxsService {
             await this.userService.updateColor(users[j].id, 1);
             users.splice(j, 1);
         }
+
+        await this.userService.startGameUsers();
         return { state: 'OK' };
     }
 
@@ -106,7 +116,24 @@ export class BoxsService {
         let array_final = [];
         this.users = users;
 
-        while(this.users.length > 0){
+        console.log(this.users.length);
+        while(this.existUsersColor('white')){
+            let endUsersWhite = this.findUserInColumns('white', size);
+
+            if(endUsersWhite.length > 0){
+                array_final = this.arrayAddArray(endUsersWhite, array_final);
+            }
+        }
+
+        while(this.existUsersColor('black')){
+            let endUsersBlack = this.findUserInColumns('black', size);
+
+            if(endUsersBlack.length > 0){
+                array_final = this.arrayAddArray(endUsersBlack, array_final);
+            }
+        }
+
+        /*while(this.users.length > 0){
             //console.log("==============================================================");
             let endUsersWhite = this.findUserInColumns('white', size);
             let endUsersBlack = this.findUserInColumns('black', size);
@@ -136,9 +163,18 @@ export class BoxsService {
                     array_final = this.arrayAddArray(endUsersBlack, array_final);
                 }
             }
-        }
+        }*/
 
         return array_final;
+    }
+
+    private existUsersColor(color){
+        for (var i = 0; i < this.users.length; ++i) {
+            if(this.users[i].team == (color == 'white')? 0 : 1){
+                return true;
+            }
+        }
+        return false;
     }
 
     private arrayAddArray(array: any, array_final: any){
