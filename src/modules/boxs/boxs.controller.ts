@@ -11,6 +11,7 @@ import { CONFIG } from '../../environment'
 export class BoxsController {
 
     private turno: number = 0;
+    private maximoVida: number = 5;
 
     constructor(private boxs: BoxsService, private userService: UsersService, private box: Box, private scoreService: ScoreService) {
     }
@@ -25,6 +26,15 @@ export class BoxsController {
     public async getTable( @Res() res: Response) {
         let newboxs = await this.boxs.getTablePublic();
         res.status(HttpStatus.CREATED).json({ turno: this.turno, tablero: newboxs });
+    }
+
+    @Post('/table/get-table-private')
+    public async getTablePrivate( @Res() res: Response, @Body() body) {
+        if (body.key == CONFIG.CODE_PRIVATE) {
+            res.status(HttpStatus.CREATED).json({ turno: this.turno, tablero: await this.boxs.getAllPrivate() });
+        } else {
+            res.status(HttpStatus.UNAUTHORIZED).json({ state: 'ERROR', description: 'GG'});
+        }
     }
 
     @Post()
@@ -82,8 +92,8 @@ export class BoxsController {
                         }
                     }
 
-                    if(usersOrder[i].vida == 4 && usersOrder[i].movimiento == 0){
-                        this.userService.suicideUser(usersOrder[i].id);
+                    if(usersOrder[i].vida == this.maximoVida && usersOrder[i].movimiento == 0){
+                        await this.userService.suicideUser(usersOrder[i].id);
                         console.log("El usuario " + usersOrder[i].id + " murio por limite de estarse quieto");
                     } else {   
                         if(this.box.validateFinish(new_position, (usersOrder[i].team == 0)? 'white': 'black', boxEnd[0].nombre)){
@@ -104,7 +114,7 @@ export class BoxsController {
                 }
                 console.log("========================");
             }
-            res.status(HttpStatus.OK).json({ turno: this.turno, tabero: await this.boxs.getAll() });
+            res.status(HttpStatus.OK).json({ turno: this.turno, tablero: await this.boxs.getAllPrivate() });
             /*
             if el usuario esta jugando
                 Verificar si movio

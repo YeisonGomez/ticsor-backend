@@ -15,8 +15,18 @@ export class BoxsService {
         private db: DatabaseService, private box: Box, private userService: UsersService) {
     }
     
-    public async getAll() {
-        return await (this.db.query(`SELECT * FROM casilla`))
+    public async getAllPrivate() {
+        return await (this.db.query(`select 
+            u.id as usuario_id,
+            u.nombres as usuario_nombres,
+            (CASE WHEN u.team = 0 THEN 'white' ELSE 'black' END) as usuario_color,
+            u.vida as usuario_vida,
+            c.nombre as casilla,
+            COUNT(p.fk_asesino) as muertes
+            from casilla c
+            right join usuario u on c.fk_usuario = u.id
+            left join puntaje p on u.id = p.fk_asesino
+            group by u.id, c.nombre, p.fk_asesino;`))
     }
 
     public async getById(id: string){
@@ -33,8 +43,8 @@ export class BoxsService {
 
     public async getTablePublic(){
         return await (this.db.query(`
-            select c.nombre as casilla, c.fk_usuario as usuario, (CASE WHEN u.team = 0 THEN 'white' ELSE 'black' END) as color
-            from casilla c
+            select c.nombre as casilla, c.fk_usuario as usuario, (CASE WHEN u.team = 0 THEN 'white' ELSE 'black' END) as color  
+            from casilla c 
             right join usuario u on c.fk_usuario = u.id`))
     }    
 
@@ -60,10 +70,19 @@ export class BoxsService {
 
     public async existUserBox(box){
         return await (this.db.query(`select * from casilla where nombre='${box}' AND fk_usuario IS NOT NULL`))
-    }    
+    }  
+
+    public async resertScore(){
+        return await (this.db.query(`DELETE FROM puntaje`));
+    }   
+
+    public async resertBox(){
+        return await (this.db.query(`UPDATE casilla SET fk_usuario=null`));
+    }   
 
     public async startGame(users: any){
         let boxEnd = await this.getEndBox();
+        await this.resertBox();
         boxEnd = boxEnd[0].nombre;
         let boxPositions = this.box.getPositionInitial(boxEnd.toString());
         if((boxPositions.white.length * 2) != users.length){
@@ -84,6 +103,7 @@ export class BoxsService {
         }
 
         await this.userService.startGameUsers();
+        await this.resertScore();
         return { state: 'OK' };
     }
 

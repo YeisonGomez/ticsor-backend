@@ -14,11 +14,11 @@ export class UsersService {
     }
 
     public async startGameUsers(){
-        return await (this.db.query(`UPDATE usuario SET movimiento='0', movio=0, estado='1', vida = 1`));
+        return await (this.db.query(`UPDATE usuario SET movimiento='0', movio=0, estado='1', vida = 0`));
     }
 
     public async updateMovement(code: number, movimiento: number){
-    	return await (this.db.query(`UPDATE usuario SET movimiento='${movimiento}', movio='1' where code=${code} AND estado = 1`));
+    	return await (this.db.query(`UPDATE usuario SET movimiento='${movimiento}', movio='1' where code=${code} AND estado = '1'`));
     }   
 
     public async updateColor(userId: number, color: number){
