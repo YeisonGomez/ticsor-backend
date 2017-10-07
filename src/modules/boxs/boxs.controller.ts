@@ -11,6 +11,7 @@ import { CONFIG } from '../../environment'
 export class BoxsController {
 
     private turno: number = 0;
+    private copy_turno: number = 0;
     private maximoVida: number = 5;
 
     constructor(private boxs: BoxsService, private userService: UsersService, private box: Box, private scoreService: ScoreService) {
@@ -20,12 +21,15 @@ export class BoxsController {
     public async test2( @Res() res) {
         let interval = setInterval((function(self) {         
             return function() {   
-                if(self.turno > 0){
+                if(self.turno > self.copy_turno){
+                    self.copy_turno++;
                     clearInterval(interval);
-                    res.json("GO");
+                    res.json(self.turno);
+                } else if(self.turno == -1){
+                    res.json(self.turno);
                 }
             }
-         })(this), 1000);
+         })(this), 300);
     }
 
     @Get('/:id')
@@ -72,7 +76,7 @@ export class BoxsController {
 
     @Post('update-table')
     public async updateTable(@Res() res: Response, @Body() body) {
-        if (body.key == CONFIG.CODE_PRIVATE) {
+        if (body.key == CONFIG.CODE_PRIVATE && this.turno != -1) {
             this.turno++;
             let users = await this.boxs.getUserAndBox();
             let boxEnd = await this.boxs.getEndBox();
@@ -109,6 +113,7 @@ export class BoxsController {
                         console.log("El usuario " + usersOrder[i].id + " murio por limite de estarse quieto");
                     } else {   
                         if(this.box.validateFinish(new_position, (usersOrder[i].team == 0)? 'white': 'black', boxEnd[0].nombre)){
+                            this.turno = -1;
                             res.status(HttpStatus.OK).json({ state: 'GAME_OVER'});
                         } else {
                             if(usersOrder[i].movimiento != 0){
@@ -126,7 +131,13 @@ export class BoxsController {
                 }
                 console.log("========================");
             }
-            res.status(HttpStatus.OK).json({ turno: this.turno, tablero: await this.boxs.getAllPrivate() });
+            let users_all = await this.boxs.getAllPrivate();
+            if(this.boxs.validUsersLifes(users_all)){
+                this.turno = -1;
+                res.status(HttpStatus.OK).json({ turno: this.turno, tablero: users_all });
+            } else {
+                res.status(HttpStatus.OK).json({ turno: this.turno, tablero: users_all });
+            }
             /*
             if el usuario esta jugando
                 Verificar si movio
@@ -159,7 +170,7 @@ export class BoxsController {
             Retornar la tabla 
             */
         }else{
-            res.status(HttpStatus.UNAUTHORIZED).json({ state: 'ERROR', description: 'GG'});
+            res.status(HttpStatus.UNAUTHORIZED).json({ state: 'ERROR', description: 'GAME OVER'});
         }
     }
 }

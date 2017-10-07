@@ -17,7 +17,7 @@ export class UsersController {
     		const query = await this.users.updateMovement(body.code, body.movimiento);
 			res.status(HttpStatus.OK).json({ state: 'OK' });	
     	}else{
-    		res.status(HttpStatus.BAD_REQUEST).json({ state: 'ERROR', description: 'GG'});
+    		res.status(HttpStatus.BAD_REQUEST).json({ state: 'ERROR', description: 'El código no fue enviado'});
     	}      
     }
 

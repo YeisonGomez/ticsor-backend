@@ -235,6 +235,16 @@ export class BoxsService {
         return array;
     }
 
+    public validUsersLifes(users){
+        let cont = 0;
+        for (var i = 0; i < users.length; ++i) {
+            if(users[i].usuario_vida == 5){
+                cont++;
+            }
+        }
+        return cont == users.length;
+    }
+
     private findUserById(array: any, id: any){
         for (var i = 0; i < array.length; ++i) {
             if(array[i].id == id){
