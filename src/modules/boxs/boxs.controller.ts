@@ -16,6 +16,18 @@ export class BoxsController {
     constructor(private boxs: BoxsService, private userService: UsersService, private box: Box, private scoreService: ScoreService) {
     }
 
+    @Get('/go-game')
+    public async test2( @Res() res) {
+        let interval = setInterval((function(self) {         
+            return function() {   
+                if(self.turno > 0){
+                    clearInterval(interval);
+                    res.json("GO");
+                }
+            }
+         })(this), 1000);
+    }
+
     @Get('/:id')
     public async getById( @Res() res, @Param('id') id) {
         let boxs = await this.boxs.getById(id);
