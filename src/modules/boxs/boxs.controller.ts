@@ -40,8 +40,18 @@ export class BoxsController {
 
     @Get('/table/get-table')
     public async getTable( @Res() res: Response) {
-        let newboxs = await this.boxs.getTablePublic();
-        res.status(HttpStatus.CREATED).json({ turno: this.turno, tablero: newboxs });
+        let interval = setInterval((function(self) {         
+            return async function() {   
+                if(self.turno > self.copy_turno){
+                    self.copy_turno++;
+                    clearInterval(interval);
+                    res.status(HttpStatus.CREATED).json({ turno: self.turno, tablero: await self.boxs.getTablePublic() });
+                    //res.json(self.turno);
+                } else if(self.turno == -1){
+                    res.json({ turno: self.turno });
+                }
+            }
+         })(this), 300);
     }
 
     @Post('/table/get-table-private')
