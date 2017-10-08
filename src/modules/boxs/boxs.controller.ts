@@ -104,7 +104,7 @@ export class BoxsController {
             let boxEnd = await this.boxs.getEndBox();
             let usersOrder = await this.boxs.orderUsersFromMovement(users, boxEnd[0].nombre.substring(1, boxEnd[0].nombre.length)); //Ningun jugador debe estar en la columna 10
             for (var i = 0; i < usersOrder.length; ++i) {
-                if(usersOrder[i].estado == '1'){
+                if(usersOrder[i].estado == '1' && this.turno != -1){
                     if(usersOrder[i].movio == 0){
                         //console.log("El usuario " + usersOrder[i].id + " no solicito moverse");
                         usersOrder[i].movimiento = 0;
@@ -142,18 +142,15 @@ export class BoxsController {
                             this.turno = -1;
                             usersOrder[i].estado = '2';
                             await this.userService.updateState(usersOrder[i].id, 2);
-                            //res.status(HttpStatus.OK).json({ state: 'GAME_OVER'});
-                        } else {
-                            if(usersOrder[i].movimiento != 0 && usersOrder[i].estado == 1){
-                                //console.log("El usuario " + usersOrder[i].id + " a la posicion " + new_position);
-                                await this.boxs.killUserTable(usersOrder[i].id, usersOrder[i].casilla_nombre);
-                                await this.boxs.newPosition(usersOrder[i].id, new_position);
-                            }
-                            this.userService.restartTurn(usersOrder[i].id, (usersOrder[i].movimiento == 0)? (usersOrder[i].vida + 1) : 0);
                         }
+
+                        if(usersOrder[i].movimiento != 0 && (usersOrder[i].estado == 1 || (usersOrder[i].estado == 2 && this.turno == -1))){
+                            //console.log("El usuario " + usersOrder[i].id + " a la posicion " + new_position);
+                            await this.boxs.killUserTable(usersOrder[i].id, usersOrder[i].casilla_nombre);
+                            await this.boxs.newPosition(usersOrder[i].id, new_position);
+                        }
+                        this.userService.restartTurn(usersOrder[i].id, (usersOrder[i].movimiento == 0)? (usersOrder[i].vida + 1) : 0);
                     }
-                } else {
-                    //console.log("El usuario " + usersOrder[i].id + " esta muerto");
                 }
                 //console.log("========================");
             }
