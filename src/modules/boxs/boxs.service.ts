@@ -21,6 +21,7 @@ export class BoxsService {
             u.nombres as usuario_nombres,
             (CASE WHEN u.team = 0 THEN 'white' ELSE 'black' END) as usuario_color,
             u.vida as usuario_vida,
+            u.estado as usuario_estado,
             c.nombre as casilla,
             COUNT(p.fk_asesino) as muertes
             from casilla c

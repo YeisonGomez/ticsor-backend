@@ -118,7 +118,7 @@ export class BoxsController {
                         let winDead = await this.userService.killUser(userExistNewPosition[0].fk_usuario, usersOrder[i].id, new_position, this.winDead);
                         let j = this.box.findUserById(usersOrder, userExistNewPosition[0].fk_usuario);
                         usersOrder[j].estado = '0';
-                        if(winDead == 1){
+                        if(winDead == 1){ //El jugador asesino 5
                             this.winDead = true;
                             usersOrder[i].estado = '2';
                         }
@@ -140,7 +140,9 @@ export class BoxsController {
                     } else {   
                         if(this.box.validateFinish(new_position, (usersOrder[i].team == 0)? 'white': 'black', boxEnd[0].nombre)){
                             this.turno = -1;
-                            res.status(HttpStatus.OK).json({ state: 'GAME_OVER'});
+                            usersOrder[i].estado = '2';
+                            await this.userService.updateState(usersOrder[i].id, 2);
+                            //res.status(HttpStatus.OK).json({ state: 'GAME_OVER'});
                         } else {
                             if(usersOrder[i].movimiento != 0 && usersOrder[i].estado == 1){
                                 //console.log("El usuario " + usersOrder[i].id + " a la posicion " + new_position);
@@ -158,10 +160,8 @@ export class BoxsController {
             let users_all = await this.boxs.getAllPrivate();
             if(this.boxs.validUsersLifes(users_all, this.maximoVida)){
                 this.turno = -1;
-                res.status(HttpStatus.OK).json({ turno: this.turno, tablero: users_all });
-            } else {
-                res.status(HttpStatus.OK).json({ turno: this.turno, tablero: users_all });
             }
+            res.status(HttpStatus.OK).json({ turno: this.turno, tablero: users_all });
             /*
             if el usuario esta jugando
                 Verificar si movio
