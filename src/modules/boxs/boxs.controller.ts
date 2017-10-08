@@ -11,29 +11,56 @@ import { CONFIG } from '../../environment'
 export class BoxsController {
 
     private turno: number = 0;
+    private winDead: boolean = false;
     private copy_turno: number = 0;
     private maximoVida: number = 5;
+    private userPending = [];
 
     constructor(private boxs: BoxsService, private userService: UsersService, private box: Box, private scoreService: ScoreService) {
     }
 
-    @Get('/table/get-table')
-    public async getTable( @Res() res: Response) {
-        let interval = setInterval((function(self) {         
-            return async function() {  
-                console.log("Esperando"); 
-                if(self.turno > self.copy_turno){
-                    self.copy_turno = self.turno;
-                    console.log("entro");
-                    clearInterval(interval);
-                    res.status(HttpStatus.OK).json({ turno: self.turno, tablero: await self.boxs.getTablePublic() });
-                    //res.json(self.turno);
-                } else if(self.turno == -1){
-                    clearInterval(interval);
-                    res.json({ turno: self.turno });
-                }
+    private findByCode(code){
+        for (let i = 0; i < this.userPending.length; ++i) {
+            if(this.userPending[i].code == code){ return i;}
+        } return -1;
+    }
+
+    @Get('/table/get-table/:id_public')
+    public async getTableTest( @Res() res: Response, @Param('id_public') id) {
+        let j = this.findByCode(id);
+        if(j == -1){
+            let state = await this.userService.getState(id);
+
+            if(state[0].estado == 0){ //Muerto
+                return res.status(HttpStatus.OK).json({ turno: -10 });
+            } else if(state[0].estado == 2){ //Winner
+                return res.status(HttpStatus.OK).json({ turno: -3 });
+            } else if(state[0].estado == 1){ //Vivo
+                this.userPending.push({ code: id, interval: undefined });
+                let interval = setInterval((function(self) {         
+                    return async function() { 
+                        let l = self.findByCode(id);
+                        self.userPending[l].interval = interval;
+
+                        //console.log("Esperando " + id); 
+                        if(self.turno > self.copy_turno){
+                            self.copy_turno = self.turno;
+                            clearInterval(interval);
+                            self.userPending.splice(l, 1);
+                            return res.status(HttpStatus.OK).json({ turno: self.turno, tablero: await self.boxs.getTablePublic() });
+                        } else if(self.turno == -1){
+                            clearInterval(interval);
+                            self.userPending.splice(l, 1);
+                            return res.json({ turno: self.turno });
+                        }
+                    }
+                 })(this), 300);
             }
-         })(this), 300);
+        } else {
+            clearInterval(this.userPending[j].interval);
+            this.userPending.splice(j, 1);
+            return res.status(HttpStatus.OK).json({ turno: -2 });
+        } 
     }
 
     @Post('/table/get-table-private')
@@ -60,6 +87,7 @@ export class BoxsController {
         if (body.key == CONFIG.CODE_PRIVATE) {
             this.turno = 0;
             this.copy_turno = 0;
+            this.winDead = false;
             let users = await this.userService.getAll();
             res.status(HttpStatus.OK).json(await this.boxs.startGame(users));
         }else{
@@ -86,9 +114,13 @@ export class BoxsController {
 
                     if((usersOrder[i].movimiento == 2 || usersOrder[i].movimiento == 3) && userExistNewPosition[0]){
                         //Movimiento diagonar y hay alguien
-                        await this.userService.killUser(userExistNewPosition[0].fk_usuario, usersOrder[i].id, new_position);
+                        let winDead = await this.userService.killUser(userExistNewPosition[0].fk_usuario, usersOrder[i].id, new_position, this.winDead);
                         let j = this.box.findUserById(usersOrder, userExistNewPosition[0].fk_usuario);
                         usersOrder[j].estado = '0';
+                        if(winDead == 1){
+                            this.winDead = true;
+                            usersOrder[i].estado = '2';
+                        }
                     } else if((usersOrder[i].movimiento == 2 || usersOrder[i].movimiento == 3) && !userExistNewPosition[0]){
                         ////console.log("El usuario " + usersOrder[i].id + " no puede asesinar en la posición " + new_position);
                         usersOrder[i].movimiento = 0;
@@ -109,12 +141,10 @@ export class BoxsController {
                             this.turno = -1;
                             res.status(HttpStatus.OK).json({ state: 'GAME_OVER'});
                         } else {
-                            if(usersOrder[i].movimiento != 0){
+                            if(usersOrder[i].movimiento != 0 && usersOrder[i].estado == 1){
                                 //console.log("El usuario " + usersOrder[i].id + " a la posicion " + new_position);
                                 await this.boxs.killUserTable(usersOrder[i].id, usersOrder[i].casilla_nombre);
                                 await this.boxs.newPosition(usersOrder[i].id, new_position);
-                            } else {
-                                //console.log("El usuario " + usersOrder[i].id + " no hace nada");
                             }
                             this.userService.restartTurn(usersOrder[i].id, (usersOrder[i].movimiento == 0)? (usersOrder[i].vida + 1) : 0);
                         }

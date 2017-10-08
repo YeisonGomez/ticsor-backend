@@ -13,6 +13,10 @@ export class UsersService {
         return await (this.db.query(`SELECT * FROM usuario`))
     }
 
+    public async getState(user_id) {
+        return await (this.db.query(`SELECT estado FROM usuario where id = ${ user_id }`))
+    }
+
     public async startGameUsers(){
         return await (this.db.query(`UPDATE usuario SET movimiento='0', movio=0, estado='1', vida = 0`));
     }
@@ -41,7 +45,7 @@ export class UsersService {
         return await (this.db.query(`UPDATE casilla SET fk_usuario=null where fk_usuario='${fk_user}'`));
     }
 
-    public async killUser(fk_muerto: number, fk_asesino: number, casilla: string){
+    public async killUser(fk_muerto: number, fk_asesino: number, casilla: string, winDead: boolean){
         /*Anotarle un puntaje 
         Cambiar el estado del usuario a muerto
         Eliminarlo del tablero
@@ -52,10 +56,12 @@ export class UsersService {
         await this.killUserTableByBox(fk_muerto, casilla);
         console.log("Se elimino del tablero a: " + fk_muerto + " en la casilla: " + casilla);
         let score = await this.scoreService.totalScoreUser(fk_asesino);
-        if(score == 5){
+        if(score == 5 && !winDead){
             await this.killUserTable(fk_asesino);
             await this.updateState(fk_asesino, 2);
+            return 1;
         }
+        return 0;
     }
 
     public async suicideUser(userId){
