@@ -45,7 +45,8 @@ export class BoxsService {
         return await (this.db.query(`
             select c.nombre as casilla, c.fk_usuario as usuario, (CASE WHEN u.team = 0 THEN 'white' ELSE 'black' END) as color  
             from casilla c 
-            right join usuario u on c.fk_usuario = u.id`))
+            right join usuario u on c.fk_usuario = u.id
+            where c.fk_usuario IS NOT null`))
     }    
 
     public async killUserTable(fk_user: number, box: string){
@@ -136,7 +137,6 @@ export class BoxsService {
         let array_final = [];
         this.users = users;
 
-        console.log(this.users.length);
         while(this.existUsersColor('white')){
             let endUsersWhite = this.findUserInColumns('white', size);
 
@@ -235,10 +235,10 @@ export class BoxsService {
         return array;
     }
 
-    public validUsersLifes(users){
+    public validUsersLifes(users, maximoVida){
         let cont = 0;
         for (var i = 0; i < users.length; ++i) {
-            if(users[i].usuario_vida == 5){
+            if(users[i].usuario_vida == maximoVida){
                 cont++;
             }
         }

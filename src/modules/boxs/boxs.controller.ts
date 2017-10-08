@@ -17,22 +17,19 @@ export class BoxsController {
     constructor(private boxs: BoxsService, private userService: UsersService, private box: Box, private scoreService: ScoreService) {
     }
 
-    @Get('/:id')
-    public async getById( @Res() res, @Param('id') id) {
-        let boxs = await this.boxs.getById(id);
-        res.status(HttpStatus.OK).json(boxs);
-    }
-
     @Get('/table/get-table')
     public async getTable( @Res() res: Response) {
         let interval = setInterval((function(self) {         
-            return async function() {   
+            return async function() {  
+                console.log("Esperando"); 
                 if(self.turno > self.copy_turno){
-                    self.copy_turno++;
+                    self.copy_turno = self.turno;
+                    console.log("entro");
                     clearInterval(interval);
-                    res.status(HttpStatus.CREATED).json({ turno: self.turno, tablero: await self.boxs.getTablePublic() });
+                    res.status(HttpStatus.OK).json({ turno: self.turno, tablero: await self.boxs.getTablePublic() });
                     //res.json(self.turno);
                 } else if(self.turno == -1){
+                    clearInterval(interval);
                     res.json({ turno: self.turno });
                 }
             }
@@ -80,7 +77,7 @@ export class BoxsController {
             for (var i = 0; i < usersOrder.length; ++i) {
                 if(usersOrder[i].estado == '1'){
                     if(usersOrder[i].movio == 0){
-                        console.log("El usuario " + usersOrder[i].id + " no solicito moverse");
+                        //console.log("El usuario " + usersOrder[i].id + " no solicito moverse");
                         usersOrder[i].movimiento = 0;
                     }
 
@@ -93,42 +90,42 @@ export class BoxsController {
                         let j = this.box.findUserById(usersOrder, userExistNewPosition[0].fk_usuario);
                         usersOrder[j].estado = '0';
                     } else if((usersOrder[i].movimiento == 2 || usersOrder[i].movimiento == 3) && !userExistNewPosition[0]){
-                        console.log("El usuario " + usersOrder[i].id + " no puede asesinar en la posición " + new_position);
+                        ////console.log("El usuario " + usersOrder[i].id + " no puede asesinar en la posición " + new_position);
                         usersOrder[i].movimiento = 0;
                     } else if(usersOrder[i].movimiento == 1){
                         let position_frente = this.box.nextPosition(usersOrder[i].casilla_nombre, 1, boxEnd[0].nombre.substring(0, 2), usersOrder[i].team);
                         let exist = await this.boxs.existUserBox(position_frente)
                         if(exist[0]){
                             usersOrder[i].movimiento = 0;
-                            console.log("El usuario " + usersOrder[i].id + " no puede mover al frente");
+                            ////console.log("El usuario " + usersOrder[i].id + " no puede mover al frente");
                         }
                     }
 
                     if(usersOrder[i].vida == this.maximoVida && usersOrder[i].movimiento == 0){
                         await this.userService.suicideUser(usersOrder[i].id);
-                        console.log("El usuario " + usersOrder[i].id + " murio por limite de estarse quieto");
+                        //console.log("El usuario " + usersOrder[i].id + " murio por limite de estarse quieto");
                     } else {   
                         if(this.box.validateFinish(new_position, (usersOrder[i].team == 0)? 'white': 'black', boxEnd[0].nombre)){
                             this.turno = -1;
                             res.status(HttpStatus.OK).json({ state: 'GAME_OVER'});
                         } else {
                             if(usersOrder[i].movimiento != 0){
-                                console.log("El usuario " + usersOrder[i].id + " a la posicion " + new_position);
+                                //console.log("El usuario " + usersOrder[i].id + " a la posicion " + new_position);
                                 await this.boxs.killUserTable(usersOrder[i].id, usersOrder[i].casilla_nombre);
                                 await this.boxs.newPosition(usersOrder[i].id, new_position);
                             } else {
-                                console.log("El usuario " + usersOrder[i].id + " no hace nada");
+                                //console.log("El usuario " + usersOrder[i].id + " no hace nada");
                             }
                             this.userService.restartTurn(usersOrder[i].id, (usersOrder[i].movimiento == 0)? (usersOrder[i].vida + 1) : 0);
                         }
                     }
                 } else {
-                    console.log("El usuario " + usersOrder[i].id + " esta muerto");
+                    //console.log("El usuario " + usersOrder[i].id + " esta muerto");
                 }
-                console.log("========================");
+                //console.log("========================");
             }
             let users_all = await this.boxs.getAllPrivate();
-            if(this.boxs.validUsersLifes(users_all)){
+            if(this.boxs.validUsersLifes(users_all, this.maximoVida)){
                 this.turno = -1;
                 res.status(HttpStatus.OK).json({ turno: this.turno, tablero: users_all });
             } else {
