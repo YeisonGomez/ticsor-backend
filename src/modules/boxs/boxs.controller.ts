@@ -88,8 +88,9 @@ export class BoxsController {
             this.turno = 0;
             this.copy_turno = 0;
             this.winDead = false;
-            let users = await this.userService.getAll();
-            res.status(HttpStatus.OK).json(await this.boxs.startGame(users));
+            let users_white = await this.userService.getAllByColor('white');
+            let users_black = await this.userService.getAllByColor('black');
+            res.status(HttpStatus.OK).json(await this.boxs.startGame(users_white, users_black));
         }else{
             res.status(HttpStatus.UNAUTHORIZED).json({ state: 'ERROR', description: 'GG'});
         }

@@ -81,26 +81,26 @@ export class BoxsService {
         return await (this.db.query(`UPDATE casilla SET fk_usuario=null`));
     }   
 
-    public async startGame(users: any){
+    public async startGame(users_white: any, users_black: any){
         let boxEnd = await this.getEndBox();
         await this.resertBox();
         boxEnd = boxEnd[0].nombre;
         let boxPositions = this.box.getPositionInitial(boxEnd.toString());
-        if((boxPositions.white.length * 2) != users.length){
-            return { state: 'ERROR', description: `Hacen falta ${ ((boxPositions.white.length * 2) - users.length) } usuarios` };
+        if((boxPositions.white.length * 2) != (users_white.length + users_black.length)){
+            return { state: 'ERROR', description: `Hacen falta ${ ((boxPositions.white.length * 2) - (users_white.length + users_black.length)) } usuarios` };
         }
         let j = 0;
         for (var i = 0; i < boxPositions.white.length; ++i) {
             //white
-            j = Math.floor((Math.random() * users.length));
-            await this.updateUserBox(boxPositions.white[i], users[j].id);
-            await this.userService.updateColor(users[j].id, 0);
-            users.splice(j, 1);
+            j = Math.floor((Math.random() * users_white.length));
+            await this.updateUserBox(boxPositions.white[i], users_white[j].id);
+            //await this.userService.updateColor(users[j].id, 0);
+            users_white.splice(j, 1);
             //black
-            j = Math.floor((Math.random() * users.length));
-            await this.updateUserBox(boxPositions.black[i], users[j].id);
-            await this.userService.updateColor(users[j].id, 1);
-            users.splice(j, 1);
+            j = Math.floor((Math.random() * users_black.length));
+            await this.updateUserBox(boxPositions.black[i], users_black[j].id);
+            //await this.userService.updateColor(users[j].id, 1);
+            users_black.splice(j, 1);
         }
 
         await this.userService.startGameUsers();
@@ -162,10 +162,8 @@ export class BoxsService {
             //console.log(endUsersBlack);
             if(endUsersWhite.length == 0 && endUsersBlack.length > 0){
                 array_final = this.arrayAddArray(endUsersBlack, array_final); 
-
             } else if(endUsersBlack.length == 0 && endUsersWhite.length > 0){
                 array_final = this.arrayAddArray(endUsersWhite, array_final);
-
             } else if(endUsersWhite.length > 0 && endUsersBlack.length > 0){
                 let columnWhite = parseInt(endUsersWhite[0].casilla_nombre.substring(1, endUsersWhite[0].casilla_nombre.length));
                 let columnBlack = parseInt(endUsersBlack[0].casilla_nombre.substring(1, endUsersBlack[0].casilla_nombre.length));
@@ -174,7 +172,6 @@ export class BoxsService {
                 if(((10 - columnBlack) + 1) == columnWhite){
                     columnWhite = (Math.floor(Math.random() * 2) == 0)? 0 : 99;
                 }
-
                 if(((10 - columnBlack) + 1) > columnWhite){
                     array_final = this.arrayAddArray(endUsersBlack, array_final);
                     array_final = this.arrayAddArray(endUsersWhite, array_final);

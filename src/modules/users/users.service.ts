@@ -13,6 +13,10 @@ export class UsersService {
         return await (this.db.query(`SELECT * FROM usuario`))
     }
 
+    public async getAllByColor(color: string) {
+        return await (this.db.query(`SELECT * FROM usuario where team = ${ ((color == 'white')? 0 : 1) }`))
+    }
+
     public async getState(user_id) {
         return await (this.db.query(`SELECT estado FROM usuario where id = ${ user_id }`))
     }
