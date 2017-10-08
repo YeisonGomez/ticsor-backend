@@ -17,21 +17,6 @@ export class BoxsController {
     constructor(private boxs: BoxsService, private userService: UsersService, private box: Box, private scoreService: ScoreService) {
     }
 
-    @Get('/go-game')
-    public async test2( @Res() res) {
-        let interval = setInterval((function(self) {         
-            return function() {   
-                if(self.turno > self.copy_turno){
-                    self.copy_turno++;
-                    clearInterval(interval);
-                    res.json(self.turno);
-                } else if(self.turno == -1){
-                    res.json(self.turno);
-                }
-            }
-         })(this), 300);
-    }
-
     @Get('/:id')
     public async getById( @Res() res, @Param('id') id) {
         let boxs = await this.boxs.getById(id);
@@ -77,6 +62,7 @@ export class BoxsController {
     public async startGame(@Res() res: Response, @Body() body) {
         if (body.key == CONFIG.CODE_PRIVATE) {
             this.turno = 0;
+            this.copy_turno = 0;
             let users = await this.userService.getAll();
             res.status(HttpStatus.OK).json(await this.boxs.startGame(users));
         }else{
