@@ -138,61 +138,13 @@ export class BoxsService {
         let array_final = [];
         this.users = users;
 
-        while(this.existUsersColor('white')){
-            let endUsersWhite = this.findUserInColumns('white', size);
-
-            if(endUsersWhite.length > 0){
-                array_final = this.arrayAddArray(endUsersWhite, array_final);
-            }
+        let column = 1;
+        while(this.users.length > 0 && column <= 10){
+            let endUsers = this.findUserInColumns(column, size);
+            array_final = this.arrayAddArray(endUsers, array_final);
+            column++;
         }
-
-        while(this.existUsersColor('black')){
-            let endUsersBlack = this.findUserInColumns('black', size);
-
-            if(endUsersBlack.length > 0){
-                array_final = this.arrayAddArray(endUsersBlack, array_final);
-            }
-        }
-
-        /*while(this.users.length > 0){
-            //console.log("==============================================================");
-            let endUsersWhite = this.findUserInColumns('white', size);
-            let endUsersBlack = this.findUserInColumns('black', size);
-            //console.log(endUsersWhite);
-            //console.log("----------------------------------");
-            //console.log(endUsersBlack);
-            if(endUsersWhite.length == 0 && endUsersBlack.length > 0){
-                array_final = this.arrayAddArray(endUsersBlack, array_final); 
-            } else if(endUsersBlack.length == 0 && endUsersWhite.length > 0){
-                array_final = this.arrayAddArray(endUsersWhite, array_final);
-            } else if(endUsersWhite.length > 0 && endUsersBlack.length > 0){
-                let columnWhite = parseInt(endUsersWhite[0].casilla_nombre.substring(1, endUsersWhite[0].casilla_nombre.length));
-                let columnBlack = parseInt(endUsersBlack[0].casilla_nombre.substring(1, endUsersBlack[0].casilla_nombre.length));
-                
-                //Quien avanzo más.
-                if(((10 - columnBlack) + 1) == columnWhite){
-                    columnWhite = (Math.floor(Math.random() * 2) == 0)? 0 : 99;
-                }
-                if(((10 - columnBlack) + 1) > columnWhite){
-                    array_final = this.arrayAddArray(endUsersBlack, array_final);
-                    array_final = this.arrayAddArray(endUsersWhite, array_final);
-                } else if(((10 - columnBlack) + 1) < columnWhite){
-                    array_final = this.arrayAddArray(endUsersWhite, array_final);
-                    array_final = this.arrayAddArray(endUsersBlack, array_final);
-                }
-            }
-        }*/
-
         return array_final;
-    }
-
-    private existUsersColor(color){
-        for (var i = 0; i < this.users.length; ++i) {
-            if(this.users[i].team == (color == 'white')? 0 : 1){
-                return true;
-            }
-        }
-        return false;
     }
 
     private arrayAddArray(array: any, array_final: any){
@@ -205,31 +157,17 @@ export class BoxsService {
         return array_final;
     }
 
-    private findUserInColumns(color: string, size: number){
+    private findUserInColumns(column: number, size: number){
         let array = [];
-        if(color == 'white'){
-            for (var i = size - 1; i >= 2; --i) {
-                for (var j = 0; j < this.users.length; ++j) {
-                    if(this.users[j].team == 0 && this.users[j].casilla_nombre.substring(1, this.users[j].casilla_nombre.length) == i){
-                        array.push(this.users[j]);
-                    }
-                }
-                if(array.length > 0){
-                    break;
-                }
+        
+        for (let j = 0; j < this.users.length; ++j) {
+            if(this.users[j].team == 0 && this.users[j].casilla_nombre.substring(1, this.users[j].casilla_nombre.length) == ((10 - column) + 1)){
+                array.push(this.users[j]);
             }
-        } else {
-            for (var i = 2; i < size; ++i) {
-                for (var j = 0; j < this.users.length; ++j) {
-                    if(this.users[j].team == 1 && this.users[j].casilla_nombre.substring(1, this.users[j].casilla_nombre.length) == i){
-                        array.push(this.users[j]);
-                    }
-                }
-                if(array.length > 0){
-                    break;
-                }
+            else if(this.users[j].team == 1 && this.users[j].casilla_nombre.substring(1, this.users[j].casilla_nombre.length) == column){
+                array.push(this.users[j]);
             }
-        }
+        }      
         return array;
     }
 

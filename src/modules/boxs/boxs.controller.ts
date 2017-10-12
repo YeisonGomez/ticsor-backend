@@ -36,18 +36,25 @@ export class BoxsController {
             } else if(state[0].estado == 2){ //Winner
                 return res.status(HttpStatus.OK).json({ turno: -3 });
             } else if(state[0].estado == 1){ //Vivo
-                this.userPending.push({ code: id, interval: undefined });
+                console.log("Se conecto " + id);
+                this.userPending.push({ code: id, interval: undefined, response: res });
                 let interval = setInterval((function(self) {         
                     return async function() { 
                         let l = self.findByCode(id);
                         self.userPending[l].interval = interval;
-
                         //console.log("Esperando " + id); 
                         if(self.turno > self.copy_turno){
+                            console.log("Responder " + id);
                             self.copy_turno = self.turno;
+                            let table = await self.boxs.getTablePublic();
+                            for (var i = 0; i < self.userPending.length; ++i) {
+                                if(self.userPending[i].code != id){
+                                    self.userPending[i].response.status(HttpStatus.OK).json({ turno: self.turno, tablero: table });
+                                }
+                            }
                             clearInterval(interval);
                             self.userPending.splice(l, 1);
-                            return res.status(HttpStatus.OK).json({ turno: self.turno, tablero: await self.boxs.getTablePublic() });
+                            return res.status(HttpStatus.OK).json({ turno: self.turno, tablero: table });
                         } else if(self.turno == -1){
                             clearInterval(interval);
                             self.userPending.splice(l, 1);
