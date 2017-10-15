@@ -49,10 +49,11 @@ export class BoxsController {
                             let table = await self.boxs.getTablePublic();
                             for (var i = 0; i < self.userPending.length; ++i) {
                                 if(self.userPending[i].code != id){
+                                    console.log("Responder " + self.userPending[i].code);
                                     self.userPending[i].response.status(HttpStatus.OK).json({ turno: self.turno, tablero: table });
                                 }
+                                clearInterval(self.userPending[i].interval);
                             }
-                            clearInterval(interval);
                             self.userPending.splice(l, 1);
                             return res.status(HttpStatus.OK).json({ turno: self.turno, tablero: table });
                         } else if(self.turno == -1){
@@ -61,7 +62,7 @@ export class BoxsController {
                             return res.json({ turno: self.turno });
                         }
                     }
-                 })(this), 300);
+                 })(this), 100);
             }
         } else {
             clearInterval(this.userPending[j].interval);
@@ -106,7 +107,6 @@ export class BoxsController {
     @Post('update-table')
     public async updateTable(@Res() res: Response, @Body() body) {
         if (body.key == CONFIG.CODE_PRIVATE && this.turno != -1) {
-            this.turno++;
             let users = await this.boxs.getUserAndBox();
             let boxEnd = await this.boxs.getEndBox();
             let usersOrder = await this.boxs.orderUsersFromMovement(users, boxEnd[0].nombre.substring(1, boxEnd[0].nombre.length)); //Ningun jugador debe estar en la columna 10
@@ -161,6 +161,7 @@ export class BoxsController {
                 }
                 //console.log("========================");
             }
+            this.turno++;
             let users_all = await this.boxs.getAllPrivate();
             if(this.boxs.validUsersLifes(users_all, this.maximoVida)){
                 this.turno = -1;

@@ -10,11 +10,12 @@ export class UsersController {
 
     @Post('update-movement')
     public async updateMovement (@Res() res: Response, @Body() body: any){
+        console.log(body);
     	if( body != undefined && body.code != undefined){
     		if (body.movimiento == undefined || isNaN(body.movimiento) || body.movimiento < 0 || body.movimiento > 3){
     			body.movimiento = 0;
     		}
-    		const query = await this.users.updateMovement(body.code, body.movimiento);
+    		let query = await this.users.updateMovement(body.code, body.movimiento);
 			res.status(HttpStatus.OK).json({ state: 'OK' });	
     	}else{
     		res.status(HttpStatus.BAD_REQUEST).json({ state: 'ERROR', description: 'El código no fue enviado'});
