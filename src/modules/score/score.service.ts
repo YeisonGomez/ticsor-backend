@@ -12,6 +12,16 @@ export class ScoreService {
         return await (this.db.query(`SELECT * FROM usuario`))
     }
 
+    public async getAllScore(){
+        return await (this.db.query(`
+            select 
+                u.id, u.nombres, u.estado, u.team, u.vida,
+                group_concat(p.fk_muerto separator ',') as muertes
+            from usuario u
+            left join puntaje p on p.fk_asesino = u.id
+            group by u.id`));
+    }
+
     public async totalScoreUser(fk_user: number){
     	return (await (this.db.query(`select COUNT(*) as total from puntaje p where p.fk_asesino = ${fk_user} GROUP BY p.fk_asesino;`)))[0].total;
     }

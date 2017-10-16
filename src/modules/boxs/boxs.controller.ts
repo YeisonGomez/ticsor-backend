@@ -71,6 +71,28 @@ export class BoxsController {
         } 
     }
 
+    @Get('/score')
+    public async getScore( @Res() res: Response) {
+        if(this.turno >= 0){ 
+            let interval = setInterval((function(self) {         
+                return async function() { 
+                    if(self.turno > self.copy_turno){
+                        self.copy_turno = self.turno;
+                        let table = await self.scoreService.getAllScore();
+                        clearInterval(interval);
+                        return res.status(HttpStatus.OK).json({ turno: self.turno, tablero: table });
+
+                    } else if(self.turno == -1){
+                        clearInterval(interval);
+                        return res.json({ turno: self.turno });
+                    }
+                }
+             })(this), 1000);
+        } else {
+            return res.status(HttpStatus.OK).json({ turno: this.turno });
+        }
+    }
+
     @Post('/table/get-table-private')
     public async getTablePrivate( @Res() res: Response, @Body() body) {
         if (body.key == CONFIG.CODE_PRIVATE) {
