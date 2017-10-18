@@ -12,5 +12,5 @@ export const CONFIG = {
 		database : process.env.DBNAME || "hangers_chess"
 	},
 	//CODE_PRIVATE: "hangers_chess_hulk_cool_123_code_123_@34123123213756435324555&"
-	CODE_PRIVATE: "321"
+	CODE_PRIVATE: "847473628"
 }

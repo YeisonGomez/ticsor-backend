@@ -161,10 +161,10 @@ export class BoxsService {
         let array = [];
         
         for (let j = 0; j < this.users.length; ++j) {
-            if(this.users[j].team == 0 && this.users[j].casilla_nombre.substring(1, this.users[j].casilla_nombre.length) == ((10 - column) + 1)){
+            if(this.users[j] && this.users[j].team == 0 && this.users[j].casilla_nombre.substring(1, this.users[j].casilla_nombre.length) == ((10 - column) + 1)){
                 array.push(this.users[j]);
             }
-            else if(this.users[j].team == 1 && this.users[j].casilla_nombre.substring(1, this.users[j].casilla_nombre.length) == column){
+            else if(this.users[j] && this.users[j].team == 1 && this.users[j].casilla_nombre.substring(1, this.users[j].casilla_nombre.length) == column){
                 array.push(this.users[j]);
             }
         }      

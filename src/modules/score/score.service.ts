@@ -15,7 +15,7 @@ export class ScoreService {
     public async getAllScore(){
         return await (this.db.query(`
             select 
-                u.id, u.nombres, u.estado, u.team, u.vida,
+                u.id, u.nombres as usuario_nombres, u.estado, u.team, u.vida as usuario_vidas,
                 group_concat(p.fk_muerto separator ',') as muertes
             from usuario u
             left join puntaje p on p.fk_asesino = u.id
