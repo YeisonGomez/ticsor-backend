@@ -17,7 +17,7 @@ export class TemaryService {
             rt.resultado
             from temario t
             left join respuesta_temario rt on rt.fk_temario = t.id and
-                (select u.id
+                (select cu.id
                 from usuario u 
                 inner join curso_usuario cu on cu.fk_usuario = u.id 
                 where u.correo = '${email}') = rt.fk_curso_usuario
