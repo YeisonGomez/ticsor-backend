@@ -12,6 +12,6 @@ export class CourseController {
 
     @Get('get-all')
     public async getAll(@Res() res: Response, @Request() req){
-		res.status(HttpStatus.OK).json(await this.courseService.getAll(req.correo));
+		res.status(HttpStatus.OK).json({ result: await this.courseService.getAll(req.correo), state: 'OK' });
     }
 }

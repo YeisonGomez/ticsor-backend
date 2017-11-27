@@ -5,14 +5,28 @@ import { CONFIG } from '../../environment'
 import { TemaryService } from './temary.service';
 import Util from '../shared/util';
 
-@Controller('user')
+@Controller('temary')
 export class TemaryController {
 
     constructor(private temaryService: TemaryService) { }
 
-    @Get('get-all')
-    public async getAll (@Res() res: Response, @Request() req){
-        await this.temaryService.getAll(req.correo);
-		res.status(HttpStatus.OK).json({ state: 'OK' });	
+    @Get('get-all/:course')
+    public async getAll (@Res() res: Response, @Request() req, @Param('course') course){
+		res.status(HttpStatus.OK).json({ result: await this.temaryService.getAll(course, req.correo), state: 'OK' });	
+    }
+
+    @Get('get-content/:temary')
+    public async getContent(@Res() res: Response, @Param('temary') temary){
+		res.status(HttpStatus.OK).json({ result: await this.temaryService.getContent(temary), state: 'OK' });	
+    }
+
+    @Get('get-question/:temary')
+    public async getQuestion(@Res() res: Response, @Param('temary') temary){
+		res.status(HttpStatus.OK).json({ result: await this.temaryService.getQuestion(temary), state: 'OK' });	
+    }
+
+    @Post('response')
+    public async response(@Res() res: Response, @Body() body){
+		res.status(HttpStatus.OK).json({ result: await this.temaryService.response(body.temary_id, body.email, body.response), state: 'OK' });	
     }
 }
