@@ -10,14 +10,13 @@ export class QrService {
     public async getByCode(code) {
         return await (this.db.query(`
             select 
-            m.*
+            m.*, 
+            concat('[', concat(group_concat(distinct concat('"', concat(mul.url, '"'))), ']')) as images 
             from marcador m 
-			where m.code = '${code}'
+            left join marcador_multimedia mm on mm.fk_marcador = m.id 
+            left join multimedia mul on mul.id = mm.fk_multimedia 
+            where m.code = '${code}'
+            group by m.id 
             `))
-    }
-
-    public async response(temary_id, email, resultado){        
-        return await (this.db.query(`CALL CALIFICATE('${email}', '${temary_id}', '${resultado}')`))
-    }
 
 }
