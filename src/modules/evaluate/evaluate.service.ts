@@ -41,4 +41,15 @@ export class EvaluateService {
         return await (this.db.query(`CALL CALIFICATE_FINISH('${email}', '${evaluate_id}', '${resultado}')`))
     }
 
+    public async getUserEvaluate(email){
+    	return await (this.db.query(`select
+			eu.id as evaluacion_usu_id,
+			eu.nota as evaluacion_nota,
+			e.nombre as evaluacion_nombre
+			from usuario u
+			left join evaluacion_usuario eu on eu.fk_usuario = u.id
+			left join evaluacion e on e.id = eu.fk_evaluacion
+			where u.correo = '${ email }'`))	
+    }
+
 }

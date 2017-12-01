@@ -18,5 +18,6 @@ export class QrService {
             where m.code = '${code}'
             group by m.id 
             `))
+    }
 
 }

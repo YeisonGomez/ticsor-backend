@@ -24,4 +24,9 @@ export class EvaluateController {
     public async response (@Res() res: Response, @Request() req, @Body() body){
 		res.status(HttpStatus.OK).json({ result: await this.evaluateService.response(body.evaluateId, body.email, body.response), state: 'OK' });	
     }
+
+    @Get('get-user-evaluate')
+    public async getUserEvaluate(@Res() res: Response, @Request() req){
+        res.status(HttpStatus.OK).json({ result: await this.evaluateService.getUserEvaluate(req.correo), state: 'OK' });    
+    }
 }
