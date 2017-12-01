@@ -14,9 +14,4 @@ export class QrController {
     public async getByCode (@Res() res: Response, @Request() req, @Param('qr_code') code){
 		res.status(HttpStatus.OK).json({ result: await this.qrService.getByCode(code), state: 'OK' });	
     }
-
-    @Post('response')
-    public async response(@Res() res: Response, @Body() body){
-		res.status(HttpStatus.OK).json({ result: await this.qrService.response(body.temary_id, body.email, body.response), state: 'OK' });	
-    }
 }
