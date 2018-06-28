@@ -1,7 +1,7 @@
 import 'dotenv/config'
 
 export const CONFIG = {
-    PORT: Number(process.env.PORT) || 3310,
+    PORT: Number(process.env.PORT) || 3312,
     JWT_SECRET: process.env.JWT_SECRET,
     DB: {
     	connectionLimit : 20,
