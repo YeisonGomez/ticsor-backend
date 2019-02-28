@@ -1,7 +1,7 @@
-import { Middleware, NestMiddleware } from '@nestjs/common'
+import { Injectable, NestMiddleware } from '@nestjs/common'
 import * as jwt from 'jsonwebtoken'
 
-@Middleware()
+@Injectable()
 export class AuthMiddleware implements NestMiddleware {
   constructor() {}
   resolve() {

@@ -9,6 +9,7 @@ export const CONFIG = {
 		port : process.env.DBPORT || 3306,
 		user: process.env.DBUSER || "user_ticsor",
 		password: process.env.DBPASSWORD || "Usr.2017_UAtic*",
-		database : process.env.DBNAME || "bd_ticsor"
-	},
+		database : process.env.DBNAME || "bd_ticsor",
+		mongodb: 'mongodb://localhost/ticsor'
+	}
 }

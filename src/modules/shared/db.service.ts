@@ -1,4 +1,4 @@
-import { Component } from "@nestjs/common"
+import { Injectable } from "@nestjs/common"
 import { IConnectionConfig, IConnection, createConnection, createPool } from 'mysql';
 
 import { CONFIG } from '../../environment'
@@ -6,7 +6,7 @@ import { CONFIG } from '../../environment'
 //updateMovement(code, movimiento) Metodo para modificar el aributo movimiento del usuario 
 //getAll() Consultar todos los usuarios
 
-@Component()
+@Injectable()
 export class DatabaseService {
 
   private pool: IConnection;

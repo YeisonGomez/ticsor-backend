@@ -5,8 +5,8 @@ import { UsersService } from './users.service';
 import { SharedModule } from './../shared/shared.module';
 
 @Module({
-    components: [UsersService],
+    providers: [UsersService],
     controllers: [UsersController],
-    modules: [SharedModule]
+    imports: [SharedModule]
 })
 export class UserModule { }

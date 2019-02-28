@@ -1,7 +1,7 @@
-import { Component } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { DatabaseService } from './../shared/db.service';
 
-@Component()
+@Injectable()
 export class TemaryService {
 
     constructor(private db: DatabaseService) {

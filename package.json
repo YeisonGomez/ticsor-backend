@@ -9,20 +9,22 @@
     "start:prod": "node dist/server.js"
   },
   "dependencies": {
-    "@nestjs/common": "^4.0.0",
-    "@nestjs/core": "^4.0.1",
+    "@nestjs/common": "^5.4.0",
+    "@nestjs/core": "^5.4.0",
     "@nestjs/microservices": "^4.0.1",
+    "@nestjs/mongoose": "^5.2.2",
     "@nestjs/testing": "^4.0.0",
     "@nestjs/websockets": "^4.0.0",
     "body-parser": "^1.17.2",
     "cors": "^2.8.4",
     "dotenv": "^4.0.0",
-    "mysql": "^2.14.1",
     "jsonwebtoken": "^8.1.0",
+    "mongoose": "^5.4.16",
+    "mysql": "^2.14.1",
     "passport": "^0.4.0",
     "passport-jwt": "^3.0.0",
     "reflect-metadata": "^0.1.10",
-    "rxjs": "^5.4.3"
+    "rxjs": "^6.2.2"
   },
   "devDependencies": {
     "ts-node": "^3.3.0",

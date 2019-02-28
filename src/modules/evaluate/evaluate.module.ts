@@ -1,4 +1,4 @@
-import { Module, NestModule, MiddlewaresConsumer, RequestMethod } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 
 import { AuthMiddleware } from '../shared/middlewares/user.middleware';
 import { EvaluateController } from './evaluate.controller';
@@ -7,12 +7,12 @@ import { EvaluateService } from './evaluate.service';
 import { SharedModule } from './../shared/shared.module';
 
 @Module({
-	components: [EvaluateService],
+	providers: [EvaluateService],
 	controllers: [EvaluateController],
-	modules: [SharedModule]
+	imports: [SharedModule]
 })
 export class EvaluateModule {
-	public configure(consumer: MiddlewaresConsumer) {
+	public configure(consumer: MiddlewareConsumer) {
 		consumer.apply(AuthMiddleware).forRoutes(EvaluateController);
 	}
 }
