@@ -12,18 +12,18 @@ export class QrService {
     }
 
     public async getByCode(code) {
-			let qr = {
-				nombre: "test",
-				descripcion: "TEST",
-				tipo: "oficial",
-				estado: "aceptado",
-				fk_usuario: 1,
-				code: code,
-				images: [ "assets/ImagenesTicSor/Biblioteca/5.gif" ]
-			};
-			const createdCat = new this.qrModel(qr);
+		let qr = {
+			nombre: "test",
+			descripcion: "TEST",
+			tipo: "oficial",
+			estado: "aceptado",
+			fk_usuario: 1,
+			code: code,
+			images: [ "assets/ImagenesTicSor/Biblioteca/5.gif" ]
+		};
+		const createdCat = new this.qrModel(qr);
     	//await createdCat.save();
-			return await this.qrModel.find({ code: code }).exec();
+		return await this.qrModel.find({ code: code }).exec();
     }
 
 }
