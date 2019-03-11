@@ -38,7 +38,7 @@ export class EvaluateService {
     }
 
     public async response(evaluate_id, email, resultado){        
-        return await (this.db.query(`CALL CALIFICATE_FINISH('${email}', '${evaluate_id}', '${resultado}')`))
+        return await (this.db.query(`CALL procedimiento_nota_evaluacion_usuario('${email}', '${evaluate_id}', '${resultado}')`))
     }
 
     public async getUserEvaluate(email){

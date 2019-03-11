@@ -8,7 +8,7 @@ export class UsersService {
     }
     
     public async login(nombres: string, apellidos: string, correo: string, foto: string) {
-        return await (this.db.query(`CALL LOGIN_USER('${ nombres }', '${ apellidos }', '${ correo }', '${ foto }')`))
+        return await (this.db.query(`CALL procedimiento_inicio_sesion('${ nombres }', '${ apellidos }', '${ correo }', '${ foto }')`))
     }
 
     public async getAll() {

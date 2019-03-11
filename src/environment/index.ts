@@ -9,7 +9,7 @@ export const CONFIG = {
 		port : process.env.DBPORT || 3306,
 		user: process.env.DBUSER || "root",
 		password: process.env.DBPASSWORD || "agc.UDLA_2*",
-		database : process.env.DBNAME || "bd_ticsor",
-		mongodb: 'mongodb+srv://ticsor:ticsor@cluster0-uhvhk.mongodb.net/ticsor?retryWrites=true'
+		database : process.env.DBNAME || "pbd_ticsor",
+		mongodb: 'mongodb+srv://ticsor:ticsor@cluster0-uhvhk.mongodb.net/test?retryWrites=true'
 	}
 }

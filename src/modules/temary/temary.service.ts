@@ -61,7 +61,7 @@ export class TemaryService {
     }
 
     public async response(temary_id, email, resultado){        
-        return await (this.db.query(`CALL CALIFICATE('${email}', '${temary_id}', '${resultado}')`))
+        return await (this.db.query(`CALL procedimiento_calificacion_respuesta_temario('${email}', '${temary_id}', '${resultado}')`))
     }
 
     public async startGameUsers(){
