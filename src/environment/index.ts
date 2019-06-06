@@ -7,8 +7,8 @@ export const CONFIG = {
     	connectionLimit : 20,
 		host: process.env.DBHOST || "191.102.85.226",
 		port : process.env.DBPORT || 3306,
-		user: process.env.DBUSER || "user_ticsor",
-		password: process.env.DBPASSWORD || "Usr.2017_UAtic*",
+		user: process.env.DBUSER || "root",
+		password: process.env.DBPASSWORD || "agc.UDLA_2*",
 		database : process.env.DBNAME || "bd_ticsor"
 	},
 }
